@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { View, StyleSheet, ScrollView } from 'react-native'
 import { Button, Portal, Text, TouchableRipple } from 'react-native-paper'
-import { TextInput, Modal, Provider } from 'react-native-paper';
+import { Modal, Provider } from 'react-native-paper';
+import { TextInput  } from 'react-native'
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,7 +12,7 @@ const AllTasks = () => {
     const tasks = useSelector(state => state.taskReducer.tasks)
     const [visible, setVisible] = React.useState(false);
     const [taskModalVisible, setTaskModalVisible] = React.useState(false);
-
+    const [editing, setEditing] = React.useState(false);
     const showModal = () => setVisible(true);
     const hideModal = () => setVisible(false);
     const containerStyle = { backgroundColor: 'white', padding: 20, margin: 10 };
@@ -23,7 +24,9 @@ const AllTasks = () => {
     const mode = useSelector(state => state.settingsReducer.mode);
     const [currentId, setCurrentId] = useState(null);
     const currentTaskIndex = tasks.findIndex(t => t.id === currentId);
+    const [search, setSearch] = useState("");
 
+    console.log(search)
     return (
         <Provider>
 
@@ -31,31 +34,46 @@ const AllTasks = () => {
                 backgroundColor: mode === 'light' ? '#fff' : '#000',
                 flex: 1
             }}>
-                <View style={styles.inputContainer}>
 
-                    <Button buttonColor={mode === 'light' ? 'black' : 'white'} style={styles.addButton} compact textColor={mode === 'light' ? 'white' : 'black'} mode="elevated" onPress={showModal}>
-                        Add a new task
-                    </Button>
+                <Portal>
+                    <Modal visible={visible} onDismiss={() => {
+                        setInputValue("");
+                        setTaskDescription("");
+                        setEditing(false);
+                        hideModal()
+                    }} contentContainerStyle={containerStyle}>
+                        <Text style={{
+                            width: '100%',
+                            textAlign: 'center',
+                            fontSize: 24,
+                            fontWeight: 'bold',
+                            marginBottom: 10,
+                            color: 'black'
+                        }}>Add a new task</Text>
+                        <TextInput autoCorrect={false} outlineColor='black'
+                            placeholderTextColor={"gray"} value={inputValue} textColor='#000' style={{ backgroundColor: 'white', color: 'black', padding: 10, borderWidth: 2, borderColor: 'royalblue', borderRadius: 4, marginBottom: 10}} placeholder="Task name" mode='outlined' onChangeText={e => setInputValue(e)} />
 
-
-                    <Portal>
-                        <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
-                            <Text style={{
-                                width: '100%',
-                                textAlign: 'center',
-                                fontSize: 24,
-                                fontWeight: 'bold',
-                                marginBottom: 10,
-                                color: 'black'
-                            }}>Add a new task</Text>
-                            <TextInput textColor='#000' style={{ backgroundColor: 'white', color: 'black' }} placeholder="Task name" mode='outlined' onChangeText={e => setInputValue(e)} />
-
-                            <TextInput textColor='#000' placeholder="Task Desc" multiline style={{ paddingVertical: 0, height: 100, backgroundColor: 'white', color: 'black' }} mode='outlined' onChangeText={e => setTaskDescription(e)} />
-                            <Button buttonColor={'#0d78f2'} style={styles.addButton} compact textColor={"white"} mode="elevated" onPress={() => {
-                                if (inputValue === "") {
-                                    setInvalidInput(true);
+                        <TextInput autoCorrect={false} outlineColor='black'
+                            activeOutlineColor='royalblue'
+                            placeholderTextColor={"gray"} value={taskDescription} textColor='#000' placeholder="Task Desc" multiline style={{ height: 100, backgroundColor: 'white', color: 'black', padding: 10, borderWidth: 2, borderColor: 'royalblue', borderRadius: 4 }} mode='outlined' onChangeText={e => setTaskDescription(e)} />
+                        <Button buttonColor={'#0d78f2'} style={styles.addButton} compact textColor={"white"} mode="elevated" onPress={() => {
+                            if (inputValue === "") {
+                                setInvalidInput(true);
+                            } else {
+                                setInvalidInput(false);
+                                if (editing) {
+                                    dispatch(taskAction.editTask({
+                                        id: currentId,
+                                        task: {
+                                            id: currentId,
+                                            text: inputValue,
+                                            desc: taskDescription,
+                                            completed: false,
+                                            important: false
+                                        }
+                                    }))
+                                    setEditing(false);
                                 } else {
-                                    setInvalidInput(false);
                                     dispatch(taskAction.addTask({
                                         id: new Date().getMilliseconds(),
                                         text: inputValue,
@@ -63,20 +81,22 @@ const AllTasks = () => {
                                         important: false,
                                         desc: taskDescription
                                     }))
-                                    setInputValue("")
-                                    setVisible(false);
                                 }
-
+                                setInputValue("");
+                                setTaskDescription("");
+                                setVisible(false);
                             }
-                            }>
-                                Submit
-                            </Button>
-                            {invalidInput && <Text style={{ width: '100%', alignItems: 'center', textAlign: 'center', color: 'red' }}>Enter a value!</Text>}
-                        </Modal>
-                    </Portal>
+
+                        }
+                        }>
+                            Submit
+                        </Button>
+                        {invalidInput && <Text style={{ width: '100%', alignItems: 'center', textAlign: 'center', color: 'red' }}>Enter a value!</Text>}
+                    </Modal>
+                </Portal>
 
 
-                </View>
+
 
                 <Portal>
                     <Modal visible={taskModalVisible} contentContainerStyle={{ ...containerStyle, height: 'auto' }} onDismiss={() => setTaskModalVisible(false)}>
@@ -87,13 +107,18 @@ const AllTasks = () => {
                             marginBottom: 10,
                             color: 'black'
                         }}>{tasks[currentTaskIndex]?.text}</Text>
-                        <Text style={{color: 'black'}}>{tasks[currentTaskIndex]?.desc}</Text>
+                        <Text style={{ color: 'black' }}>{tasks[currentTaskIndex]?.desc}</Text>
                     </Modal>
                 </Portal>
 
+                <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+
+                <TextInput autoCorrect={false} value={search} placeholderTextColor={"gray"} onChangeText={e => setSearch(e)} style={{ padding: 10, borderRadius: 4, borderWidth: 2, borderColor: 'gray', width: '95%', marginTop: 10}} placeholder='Search tasks...'/>
+                </View>
+
                 <ScrollView style={styles.tasksContainer}>
                     {tasks.length ?
-                        tasks.map(item => (<View key={item.id} style={{
+                        tasks.filter(task => task.text.toLowerCase().includes(search.toLowerCase()) || task.desc.toLowerCase().includes(search.toLowerCase())).map(item => (<View key={item.id} style={{
                             ...styles.cardContainer,
                             backgroundColor: item.completed === true ? "#178917" : '#0d78f2',
                         }}>
@@ -133,11 +158,23 @@ const AllTasks = () => {
                                 <AntDesign name="delete" size={24} color={"white"} />
                             </TouchableRipple>
 
-
+                            <TouchableRipple
+                                style={{ marginHorizontal: 10 }}
+                                onPress={() => {
+                                    setEditing(true);
+                                    setInputValue(item.text);
+                                    setTaskDescription(item.desc);
+                                    setCurrentId(item.id)
+                                    showModal();
+                                }}
+                                rippleColor="#c9c9c951"
+                            >
+                                <AntDesign name="edit" size={24} color={"white"} />
+                            </TouchableRipple>
                         </View>))
 
                         :
-                        <Text>No tasks</Text>
+                        <Text style={{ color: mode === "dark" ? "white" : "black"}}>No tasks</Text>
                     }
 
                 </ScrollView>
@@ -145,6 +182,20 @@ const AllTasks = () => {
 
 
             </View>
+
+            <Button buttonColor={"#0d78f2"} style={{
+                width: 55,
+                height: 55,
+                borderRadius: 40,
+                justifyContent: 'center',
+                alignItems: 'center',
+                bottom: 10,
+                right: 10,
+                position: "absolute",
+                paddingTop: 0
+            }} contentStyle={{marginTop: 5}} compact mode='elevated' textColor={mode === 'light' ? 'white' : 'black'} onPress={showModal}>
+                <Ionicons name="add" size={28} color={mode === 'light' ? 'white' : 'black'} />
+            </Button>
         </Provider>
     )
 }

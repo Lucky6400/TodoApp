@@ -53,7 +53,7 @@ const Important = () => {
               }))}
               rippleColor="#c9c9c951"
             >
-              <Ionicons name="checkmark-done-circle-outline" size={24} color={item.completed === true ? "green" : "white"} />
+              <Ionicons name="checkmark-done-circle-outline" size={24} color={"white"} />
             </TouchableRipple>
             <Text
               style={{

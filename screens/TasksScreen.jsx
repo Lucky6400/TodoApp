@@ -20,10 +20,10 @@ function TasksScreen() {
     const mode = useSelector(state => state.settingsReducer.mode)
     const [index, setIndex] = React.useState(0);
     const [routes] = React.useState([
-        { key: 'music', title: <Text style={{ color: mode === 'light' ? "#000" : "#fff" }}>All</Text>, focusedIcon: () => <FontAwesome name="tasks" size={24} color={mode === 'light' ? "black" : "white"} /> },
-        { key: 'albums', title: <Text style={{ color: mode === 'light' ? "black" : "white" }}>Pending</Text>, focusedIcon: () => <MaterialIcons name="pending-actions" size={24} color={mode === 'light' ? "black" : "white"} /> },
-        { key: 'recents', title: <Text style={{ color: mode === 'light' ? "black" : "white" }}>Completed</Text>, focusedIcon: () => <Ionicons name="checkmark-done" size={24} color={mode === 'light' ? "black" : "white"} /> },
-        { key: 'notifications', title: <Text style={{ color: mode === 'light' ? "black" : "white" }}>Important</Text>, focusedIcon: () => <FontAwesome name="exclamation-circle" size={24} color={mode === 'light' ? "black" : "white"} /> },
+        { key: 'music', title: <Text style={{ color: mode === 'light' ? '#0d78f2' : "#fff" }}>All</Text>, focusedIcon: () => <FontAwesome name="tasks" size={24} color={mode === 'light' ? '#0d78f2' : "white"} /> },
+        { key: 'albums', title: <Text style={{ color: mode === 'light' ? '#0d78f2' : "white" }}>Pending</Text>, focusedIcon: () => <MaterialIcons name="pending-actions" size={24} color={mode === 'light' ? '#0d78f2' : "white"} /> },
+        { key: 'recents', title: <Text style={{ color: mode === 'light' ? '#0d78f2' : "white" }}>Completed</Text>, focusedIcon: () => <Ionicons name="checkmark-done" size={24} color={mode === 'light' ? '#0d78f2' : "white"} /> },
+        { key: 'notifications', title: <Text style={{ color: mode === 'light' ? '#0d78f2' : "white" }}>Important</Text>, focusedIcon: () => <FontAwesome name="exclamation-circle" size={24} color={mode === 'light' ? '#0d78f2' : "white"} /> },
     ]);
     
     const renderScene = BottomNavigation.SceneMap({
@@ -56,12 +56,12 @@ function TasksScreen() {
                     borderTopWidth: 1,
                     color: 'white'
                 }}
+                sceneAnimationEnabled
                 theme={{
                     colors: {
                         secondaryContainer: 'transparent',
                     }
                 }}
-                sceneAnimationType="shifting"
                 shifting
             />
         </PaperProvider>

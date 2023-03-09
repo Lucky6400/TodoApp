@@ -32,7 +32,7 @@ export default function App() {
           <Stack.Navigator initialRouteName="Home">
             <Stack.Screen name="Home" component={HomeScreen}
               options={{
-                title: 'TodoApp',
+                title: 'Welcome back, Lucky!',
                 headerStyle: {
                   backgroundColor: "#fff",
                 },

@@ -28,6 +28,12 @@ export const taskSlice = createSlice({
         },
         resetData(state, action) {
             state.tasks = [];
+        },
+        editTask(state, action) {
+            const newTasks = state.tasks;
+            const currentIndex = newTasks.findIndex(task => task.id === action.payload.id)
+            newTasks[currentIndex] = action.payload.task;
+            state.tasks = newTasks;
         }
     }
 })

@@ -75,14 +75,14 @@ function SettingsScreen() {
           />
         </List.Section>
         <Portal>
-          <Dialog style={{backgroundColor: 'white'}} visible={visible} onDismiss={hideDialog}>
+          <Dialog visible={visible} onDismiss={hideDialog}>
             <Dialog.Title>Warning <Ionicons name="warning" size={24} color="red" /></Dialog.Title>
             <Dialog.Content>
               <Paragraph>This will delete all your tasks and you will never be able to get them back. Are you sure you want to continue?</Paragraph>
             </Dialog.Content>
             <Dialog.Actions>
-              <Button textColor='black' onPress={hideDialog}>Cancel</Button>
-              <Button textColor='black' onPress={() => {
+              <Button textColor='white' onPress={hideDialog}>Cancel</Button>
+              <Button textColor='white' onPress={() => {
                 dispatch(taskAction.resetData());
                 hideDialog();
               }}>Yes</Button>
